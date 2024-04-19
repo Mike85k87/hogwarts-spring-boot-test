@@ -151,7 +151,7 @@ public class FacultyControllerWebMvcTest {
         final String color = "red";
 
         List<Faculty> faculties = new ArrayList<>();
-        faculties.add(new Faculty(id, name, color));
+        faculties.add(new Faculty(id, name, color, null));
 
         when(facultyRepository.findByColorIgnoreCase(eq(color))).thenReturn(faculties);
 
@@ -188,10 +188,10 @@ public class FacultyControllerWebMvcTest {
 
     @Test
     void getStudentsOfFacultyTest() throws Exception {
-        Student student1 = new Student(1L, "s1", 25);
-        Student student2 = new Student(2L, "s2", 30);
+        Student student1 = new Student(1L, "s1", 25,null);
+        Student student2 = new Student(2L, "s2", 30,null);
 
-        Faculty faculty = new Faculty(1L, "IT", "red");
+        Faculty faculty = new Faculty(1L, "IT", "red",null);
 
         /*student1.setFaculty(faculty);
         student2.setFaculty(faculty);*/

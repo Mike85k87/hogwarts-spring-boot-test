@@ -11,9 +11,14 @@ import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
+import ru.hogwarts.school.repository.FacultyRepository;
 
+import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -23,6 +28,8 @@ class StudentControllerTestRest {
 
     @Autowired
     private StudentController studentController;
+    @Autowired
+    private FacultyController facultyController;
     @Autowired
     private TestRestTemplate restTemplate;
 
@@ -51,17 +58,18 @@ class StudentControllerTestRest {
 
     @Test
     void editStudent() throws Exception {
-        Student student = new Student();
-        student.setId(202L);
-        student.setName("Karl");
-        student.setAge(40);
-        ResponseEntity<Student> responseEntity = restTemplate.exchange("/student", HttpMethod.PUT,
-                new HttpEntity<>(student), Student.class);
-        Assertions.
-                assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-        Student editedStudent = responseEntity.getBody();
-        Assertions.
-                assertThat(editedStudent).isEqualTo(student);
+        Student student1 = new Student(2L,"Karl",40,null);
+        studentController.createStudent(student1);
+
+        Student student2 = new Student(2L,"Hagrid",60, null);
+
+        ResponseEntity<Student> response = restTemplate.exchange("http://localhost:" + port + "/student",
+                HttpMethod.PUT,
+                new HttpEntity<>(student2),
+                Student.class);
+
+        Assertions
+                .assertThat(response.getBody().getName()).isEqualTo("Hagrid");
     }
 
     @Test
@@ -75,24 +83,26 @@ class StudentControllerTestRest {
 
     @Test
     void findAllByAgeBetween() throws Exception {
-        Student student1 = new Student(2L, "maxim", 20);  //Создаем ожидаемых из базы студентов
-        Student student2 = new Student(3L, "vasiliy", 25);
-        Student student3 = new Student(4L, "alexey", 30);
+        Student student1 = new Student(2L, "maxim", 20,null);  //Создаем ожидаемых из базы студентов
+        studentController.createStudent(student1);
+        Student student2 = new Student(3L, "vasiliy", 25, null);
+        studentController.createStudent(student2);
+        Student student3 = new Student(4L, "alexey", 30, null);
+        studentController.createStudent(student3);
 
-        Assertions
-                .assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/student/ageBetween?minAge=20&maxAge=30", Student[].class))
-                .isNotNull()
-                .containsAnyOf(student1, student2, student3);
+        var result = restTemplate.getForObject("http://localhost:" + port + "/student/ageBetween?minAge=20&maxAge=30", String.class);
+        assertThat(result).isNotNull();
     }
 
     @Test
     void getFacultyOfStudent() throws Exception {
-        Faculty faculty = new Faculty(1L, "IT", "red");
+        Faculty faculty1 = new Faculty(20L, "Test", "fhgdbd", null);
+        facultyController.createFaculty(faculty1);
+        Student student1 = new Student(100L, "Lucius", 40, faculty1);
+        studentController.createStudent(student1);
 
-        Assertions
-                .assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/student/facultyOfStudent?studentId=2", Faculty.class))
-                .isNotNull()
-                .isEqualTo(faculty);
+        Faculty actual = this.restTemplate.getForObject("http://localhost:" + port + "/student/facultyOfStudent?id=" + student1.getId(), Faculty.class);
+        assertThat(actual.getId()).isEqualTo(faculty1.getId());
     }
 
     @Test

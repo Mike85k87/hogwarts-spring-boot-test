@@ -74,9 +74,9 @@ public class StudentControllerWebMvcTest {
 
     @Test
     void createStudent() throws Exception {
-        final Long id = 1L;
-        final String name = "nameTest";
-        final int age = 29;
+        Long id = 1L;
+        String name = "nameTest";
+        int age = 29;
 
         JSONObject studentObject = new JSONObject();
         studentObject.put("name", name);
@@ -90,11 +90,11 @@ public class StudentControllerWebMvcTest {
         when(studentRepository.save(any(Student.class))).thenReturn(student);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .post("/student")
+                        .post("/student/createStudent") //send
                         .content(studentObject.toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+                .andExpect(status().isOk()) //receive
                 .andExpect(jsonPath("$.id").value(id))
                 .andExpect(jsonPath("$.name").value(name))
                 .andExpect(jsonPath("$.age").value(age));
@@ -144,8 +144,8 @@ public class StudentControllerWebMvcTest {
     @Test
     void findAllByAgeBetween() throws Exception {
         List<Student> students = new ArrayList<>();
-        students.add(new Student(1L, "nameTest1", 29));
-        students.add(new Student(2L, "nameTest2", 39));
+        students.add(new Student(1L, "nameTest1", 29,null));
+        students.add(new Student(2L, "nameTest2", 39,null));
 
         when(studentRepository.findAllByAgeBetween(20, 30)).thenReturn(students);
 
@@ -160,8 +160,8 @@ public class StudentControllerWebMvcTest {
 
     @Test
     void getFacultyOfStudent() throws Exception {
-        Student student = new Student(1L, "s1", 25);
-        Faculty faculty = new Faculty(1L, "IT", "red");
+        Student student = new Student(1L, "s1", 25,null);
+        Faculty faculty = new Faculty(1L, "IT", "red",null);
         student.setFaculty(faculty);
 
         when(studentRepository.findById(any(Long.class))).thenReturn(Optional.of(student));
@@ -176,4 +176,3 @@ public class StudentControllerWebMvcTest {
                 .andExpect(jsonPath("$.color").value("red"));
     }
 }
-

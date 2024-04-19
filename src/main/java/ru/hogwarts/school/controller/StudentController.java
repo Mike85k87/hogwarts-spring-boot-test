@@ -36,7 +36,7 @@ public class StudentController {
         return ResponseEntity.ok(student);
     }
 
-    @PostMapping
+    @PostMapping("/createStudent")
     public Student createStudent(@RequestBody Student student) {
         return studentService.createStudent(student);
     }
@@ -65,7 +65,6 @@ public class StudentController {
     public Faculty getFacultyOfStudent(@RequestParam long studentId) {
         return studentService.findStudent(studentId).getFaculty();
     }
-
     @PostMapping(value = "/{id}/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> uploadAvatar(@PathVariable Long id, @RequestParam MultipartFile avatar) throws IOException {
         if (avatar.getSize() > 1024 * 300) {
@@ -102,4 +101,3 @@ public class StudentController {
         }
     }
 }
-
