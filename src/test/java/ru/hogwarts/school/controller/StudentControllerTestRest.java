@@ -96,12 +96,9 @@ class StudentControllerTestRest {
 
     @Test
     void getFacultyOfStudent() throws Exception {
-        Faculty faculty1 = new Faculty(20L, "Test", "fhgdbd", null);
-        facultyController.createFaculty(faculty1);
-        Student student1 = new Student(100L, "Lucius", 40, faculty1);
-        studentController.createStudent(student1);
-
-        Faculty actual = this.restTemplate.getForObject("http://localhost:" + port + "/student/facultyOfStudent?id=" + student1.getId(), Faculty.class);
+        Faculty faculty1 = facultyController.createFaculty(new Faculty(20L, "Test", "fhgdbd", null));
+        Student student1 = studentController.createStudent(new Student(100L, "Lucius", 40, faculty1));
+        Faculty actual = this.restTemplate.getForObject("http://localhost:" + port + "/student/facultyOfStudent?studentId=" + student1.getId(), Faculty.class);
         assertThat(actual.getId()).isEqualTo(faculty1.getId());
     }
 
