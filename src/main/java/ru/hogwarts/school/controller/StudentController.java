@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 @RestController
 @RequestMapping("student")
@@ -65,5 +66,16 @@ public class StudentController {
     public Faculty getFacultyOfStudent(@RequestParam long studentId) {
         return studentService.findStudent(studentId).getFaculty();
     }
-
+    @GetMapping ("amountOfStudent")
+    public int  getAmountOfStudents(){
+        return studentService.getAmountOfStudents();
+    }
+    @GetMapping ("averageAge")
+    public int  getAverageAge(){
+        return studentService.getAverageAge();
+    }
+    @GetMapping ("lastStudents")
+    public List<Student> getLastStudents(){
+        return studentService.getLastStudents();
+    }
 }
