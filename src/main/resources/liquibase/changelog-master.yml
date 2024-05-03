@@ -1,0 +1,3 @@
+databaseChange:
+  - include:
+      file: liquibase/index-practice.sql
