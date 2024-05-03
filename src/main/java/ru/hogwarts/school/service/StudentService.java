@@ -1,5 +1,7 @@
 package ru.hogwarts.school.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +23,7 @@ import static java.nio.file.StandardOpenOption.CREATE_NEW;
 @Service
 @Transactional
 public class StudentService {
-
+    Logger logger= LoggerFactory.getLogger(StudentService.class );
     @Value("${avatars.dir.path}")
     private String avatarsDir;
 
@@ -33,31 +35,41 @@ public class StudentService {
         this.avatarRepository = avatarRepository;
     }
     public Student createStudent(Student student) {
+        logger.info("Was invoked method create with parameter");
         return studentRepository.save(student);
     }
 
     public Student findStudent(long id) {
+        logger.info("Was invoked method findStudent with id={}", id);
+        logger.debug("Find student {} by id",  studentRepository.findById(id).get());
         return studentRepository.findById(id).orElseThrow(RecordNotFoundException::new);
     }
 
     public Student editStudent(Student student) {
+        logger.info("Was invoked method editStudent");
+        logger.debug("Edit student {} ",  studentRepository.save(student));
         return studentRepository.save(student);
     }
 
     public void removeStudent(long id) {
+        logger.info("Was invoked method removeStudent with id={}", id);
         studentRepository.deleteById(id);
     }
 
     public List<Student> studentsByAgeBetween(Integer minAge, Integer maxAge) {
+        logger.info("Was invoked method studentsByAgeBetween");
         return studentRepository.findAllByAgeBetween(minAge, maxAge);
     }
     public int getAmountOfStudents () {
+        logger.info("Was invoked method getAmountOfStudents");
         return studentRepository.amountOfStudents();
     }
     public int getAverageAge () {
+        logger.info("Was invoked method getAverageAge");
         return studentRepository.averageAge();
     }
     public List<Student> getLastStudents() {
+        logger.info("Was invoked method getLastStudents");
         return studentRepository.getLastStudents();
     }
 }
