@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
 
 @RestController
 @RequestMapping("student")
@@ -64,6 +65,16 @@ public class StudentController {
     @GetMapping("/facultyOfStudent")
     public Faculty getFacultyOfStudent(@RequestParam long studentId) {
         return studentService.findStudent(studentId).getFaculty();
+    }
+
+    @GetMapping("/withA")
+    public ResponseEntity<Collection<String>> getAllStudentStartWithA() {
+        return ResponseEntity.ok(studentService.getAllStudentStartWithA());
+    }
+
+    @GetMapping("/streamAvgAge")
+    public int getAverageAgeOfStudentsFromStream() {
+        return studentService.getAverageAgeOfStudentsFromStream();
     }
 
 }

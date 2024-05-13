@@ -42,4 +42,15 @@ public class FacultyService {
     public Faculty facultyByName(String color) {
         return facultyRepository.findFacultyByNameIgnoreCase(color);
     }
+    public String getMaxLengthNameOfFaculty() {
+        String[] result = {""};
+        facultyRepository.findAll().stream()
+                .map(Faculty::getName)
+                .forEach(s -> {
+                    if (result[0].length() < s.length()) {
+                        result[0] = s;
+                    }
+                });
+        return  result[0];
+    }
 }

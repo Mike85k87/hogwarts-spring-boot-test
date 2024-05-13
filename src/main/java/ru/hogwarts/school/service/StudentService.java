@@ -23,6 +23,7 @@ import static java.nio.file.StandardOpenOption.CREATE_NEW;
 @Service
 @Transactional
 public class StudentService {
+    private static final String PREFIX = "A";
     Logger logger= LoggerFactory.getLogger(StudentService.class );
     @Value("${avatars.dir.path}")
     private String avatarsDir;
@@ -72,4 +73,23 @@ public class StudentService {
         logger.info("Was invoked method getLastStudents");
         return studentRepository.getLastStudents();
     }
+    public List<String> getAllStudentStartWithA() {
+        logger.info("Was invoked method getAllStudentStartWith{}",
+                PREFIX);
+        return studentRepository.findAll()
+                .stream()
+                .filter(s -> s.getName().startsWith(PREFIX))
+                .map(s -> s.getName().toUpperCase())
+                .sorted(String::compareTo)
+                .toList();
+    }
+
+    public int getAverageAgeOfStudentsFromStream() {
+        logger.info("Was invoked method getAverageAgeOfStudentsFromStream");
+        return (int) studentRepository.findAll().stream()
+                .mapToInt(Student::getAge)
+                .average().orElse(0);
+    }
+
+
 }
