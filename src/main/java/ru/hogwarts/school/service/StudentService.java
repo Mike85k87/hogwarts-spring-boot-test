@@ -16,13 +16,17 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.function.Consumer;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
 @Service
 @Transactional
 public class StudentService {
+    private static final int MAX_STUDENTS = 6;
     private static final String PREFIX = "A";
     Logger logger= LoggerFactory.getLogger(StudentService.class );
     @Value("${avatars.dir.path}")
@@ -31,6 +35,7 @@ public class StudentService {
     private final StudentRepository studentRepository;
 
     private final AvatarRepository avatarRepository;
+    private LinkedList<Student> students;
     public StudentService(StudentRepository studentRepository, AvatarRepository avatarRepository) {
         this.studentRepository = studentRepository;
         this.avatarRepository = avatarRepository;
@@ -90,6 +95,35 @@ public class StudentService {
                 .mapToInt(Student::getAge)
                 .average().orElse(0);
     }
+    private void validateStudents() {
+        students = new LinkedList<>(studentRepository.getSixFirstStudent());
+        System.out.println(students);
+        if(students.size() < MAX_STUDENTS) {
+            throw new NoSuchElementException("There are not enough students at the institute");
+        }
+    }
+    public void printFirstSixStudentsParallel(Consumer<Integer> consumer) {
+        validateStudents();
+        consumer.accept(0);
+        consumer.accept(1);
 
+        new Thread(() -> {
+            consumer.accept(2);
+            consumer.accept(3);
+        }).start();
+
+        new Thread(() -> {
+            consumer.accept(4);
+            consumer.accept(5);
+        }).start();
+    }
+
+    public synchronized void printStudentNameSynchronized() {
+        System.out.println(students.pollFirst());
+    }
+
+    public void printNameStudent(int index) {
+        System.out.println(students.get(index));
+    }
 
 }
