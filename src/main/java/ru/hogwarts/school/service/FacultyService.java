@@ -7,6 +7,7 @@ import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.repository.FacultyRepository;
 
 import java.util.Collection;
+import java.util.Comparator;
 
 @Service
 public class FacultyService {
@@ -42,15 +43,9 @@ public class FacultyService {
     public Faculty facultyByName(String color) {
         return facultyRepository.findFacultyByNameIgnoreCase(color);
     }
-    public String getMaxLengthNameOfFaculty() {
-        String[] result = {""};
-        facultyRepository.findAll().stream()
-                .map(Faculty::getName)
-                .forEach(s -> {
-                    if (result[0].length() < s.length()) {
-                        result[0] = s;
-                    }
-                });
-        return  result[0];
+    public Faculty getMaxLengthNameOfFaculty() {
+        return facultyRepository.findAll().stream()
+                .max(Comparator.comparing(faculty -> faculty.getName().length()))
+                .orElse(null);
     }
 }
